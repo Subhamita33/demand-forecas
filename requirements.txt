@@ -1,0 +1,15 @@
+# Data handling and processing
+pandas
+numpy
+
+# Machine learning model (XGBoost is a strong choice for structured data forecasting)
+xgboost
+scikit-learn
+
+# Model persistence (for saving and loading the trained models)
+joblib
+
+# API serving (for the real-time prediction service)
+fastapi
+uvicorn
+python-multipart

@@ -1,0 +1,20 @@
+# Contents of .gitignore
+
+# Python environment
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Data and Model Assets (DO NOT COMMIT LARGE FILES/SENSITIVE DATA)
+raw_demand_data.csv
+final_forecasts.csv
+demand_model.pkl 
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
