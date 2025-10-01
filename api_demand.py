@@ -10,11 +10,16 @@ import pandas as pd
 import numpy as np
 import joblib
 from io import BytesIO
+import os
 
 # Import utilities from our pipeline
-from schema_validation import validate_and_standardize
-from feature_engineering import apply_feature_engineering
-
+try:
+    from schema_validation import validate_and_standardize
+    from feature_engineering import apply_feature_engineering
+    ML_DEPS_AVAILABLE = True
+except ImportError as e:
+    print(f"WARNING: ML dependencies not available: {e}")
+    ML_DEPS_AVAILABLE = False
 
 app = FastAPI(title="Materials Demand Forecasting API")
 # Configure CORS to allow any origin for development
@@ -36,6 +41,9 @@ def load_model_and_metadata():
     global model, feature_names
     if model is None:
         try:
+            if not ML_DEPS_AVAILABLE:
+                raise RuntimeError("ML dependencies not available")
+                
             # NOTE: We assume 'demand_model.pkl' is in the same directory
             model_package = joblib.load('demand_model.pkl')
             model = model_package['demand_model']
@@ -45,10 +53,15 @@ def load_model_and_metadata():
             raise RuntimeError("Model file 'demand_model.pkl' not found. Please train the model.")
         except KeyError:
             raise RuntimeError("Model package is corrupted (missing 'demand_model' or 'feature_names').")
+        except Exception as e:
+            raise RuntimeError(f"Error loading model: {str(e)}")
 
 
 def predict_df(df: pd.DataFrame) -> pd.DataFrame:
     """Core prediction logic: validates, engineers features, aligns, and predicts."""
+    if not ML_DEPS_AVAILABLE:
+        raise RuntimeError("ML dependencies not available")
+        
     load_model_and_metadata()
     
     # 1. Validation and Standardization
@@ -85,6 +98,9 @@ async def predict_demand(file: UploadFile = File(...)):
     """
     Accepts a CSV file, generates demand forecasts, and returns the augmented data as JSON.
     """
+    if not ML_DEPS_AVAILABLE:
+        raise HTTPException(status_code=503, detail="ML dependencies not available. Service is in maintenance mode.")
+    
     try:
         content = await file.read()
         df = pd.read_csv(BytesIO(content))
@@ -121,40 +137,44 @@ async def serve_index():
     return FileResponse("index(2).html", media_type="text/html")
 
 
-@app.post("/train")
-async def train_model():
-    """Retrain the model on demand"""
-    try:
-        import subprocess
-        result = subprocess.run(["python", "train_demand_model.py"], capture_output=True, text=True)
-        if result.returncode == 0:
-            # Reload the model after training
-            global model, feature_names
-            model = None
-            feature_names = None
-            load_model_and_metadata()
-            return {"status": "success", "message": "Model retrained successfully"}
-        else:
-            return {"status": "error", "message": result.stderr}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Training failed: {str(e)}")
-
-
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""
     try:
-        load_model_and_metadata()
-        return {
-            "status": "healthy",
-            "model_loaded": model is not None,
-            "message": "Service is running normally"
-        }
+        if ML_DEPS_AVAILABLE:
+            load_model_and_metadata()
+            return {
+                "status": "healthy",
+                "model_loaded": model is not None,
+                "ml_deps": True,
+                "message": "Service is running normally"
+            }
+        else:
+            return {
+                "status": "healthy", 
+                "model_loaded": False,
+                "ml_deps": False,
+                "message": "Service running without ML dependencies"
+            }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Service unhealthy: {str(e)}")
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "message": "Service has issues"
+        }
 
 
-# For Render deployment
+@app.get("/test")
+async def test_endpoint():
+    """Simple test endpoint without model dependencies"""
+    return {
+        "status": "success", 
+        "message": "API is working correctly",
+        "ml_deps_available": ML_DEPS_AVAILABLE
+    }
+
+
+# For local development
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
