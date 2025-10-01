@@ -114,5 +114,12 @@ async def serve_dashboard():
     """Serves the static dashboard.html file."""
     # Use an appropriate path. '.' means the current working directory.
     return FileResponse("dashboard.html", media_type="text/html")
+# Vercel deployment compatibility
+import os
 
+# For Vercel serverless deployment
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
 # The rest of your api_demand.py (including @app.post("/predict")) remains the same.
