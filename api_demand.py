@@ -5,7 +5,7 @@ Loads 'demand_model.pkl' and serves predictions via an /predict endpoint.
 """
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, FileResponse # <-- ADD FileResponse
+from fastapi.responses import HTMLResponse, FileResponse
 import pandas as pd
 import numpy as np
 import joblib
@@ -112,14 +112,9 @@ async def predict_demand(file: UploadFile = File(...)):
 @app.get("/", response_class=FileResponse)
 async def serve_dashboard():
     """Serves the static dashboard.html file."""
-    # Use an appropriate path. '.' means the current working directory.
     return FileResponse("dashboard.html", media_type="text/html")
-# Vercel deployment compatibility
-import os
 
-# For Vercel serverless deployment
+# For Render deployment
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
-# The rest of your api_demand.py (including @app.post("/predict")) remains the same.
+    uvicorn.run(app, host="0.0.0.0", port=8000)
