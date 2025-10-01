@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api_demand.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "dashboard.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/predict",
+      "dest": "/api_demand.py"
+    },
+    {
+      "src": "/",
+      "dest": "/api_demand.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api_demand.py"
+    }
+  ]
+}
