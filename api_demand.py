@@ -111,8 +111,48 @@ async def predict_demand(file: UploadFile = File(...)):
 
 @app.get("/", response_class=FileResponse)
 async def serve_dashboard():
-    """Serves the static dashboard.html file."""
-    return FileResponse("dashboard.html", media_type="text/html")
+    """Serves the auth.html as the main dashboard."""
+    return FileResponse("auth.html", media_type="text/html")
+
+
+@app.get("/index", response_class=FileResponse)
+async def serve_index():
+    """Serves the secondary index page."""
+    return FileResponse("index(2).html", media_type="text/html")
+
+
+@app.post("/train")
+async def train_model():
+    """Retrain the model on demand"""
+    try:
+        import subprocess
+        result = subprocess.run(["python", "train_demand_model.py"], capture_output=True, text=True)
+        if result.returncode == 0:
+            # Reload the model after training
+            global model, feature_names
+            model = None
+            feature_names = None
+            load_model_and_metadata()
+            return {"status": "success", "message": "Model retrained successfully"}
+        else:
+            return {"status": "error", "message": result.stderr}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Training failed: {str(e)}")
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring"""
+    try:
+        load_model_and_metadata()
+        return {
+            "status": "healthy",
+            "model_loaded": model is not None,
+            "message": "Service is running normally"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Service unhealthy: {str(e)}")
+
 
 # For Render deployment
 if __name__ == "__main__":
