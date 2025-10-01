@@ -47,3 +47,4 @@ This script creates the synthetic historical dataset (`raw_demand_data.csv`).
 
 ```bash
 python generate_demand_data.py
+```
