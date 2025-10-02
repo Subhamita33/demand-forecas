@@ -125,17 +125,27 @@ async def predict_demand(file: UploadFile = File(...)):
     }
 
 
-@app.get("/", response_class=FileResponse)
-async def serve_dashboard():
-    """Serves the auth.html as the main dashboard."""
-    return FileResponse("auth.html", media_type="text/html")
+@app.get("/")
+async def root():
+    """Root endpoint that returns API information"""
+    return {
+        "message": "Demand Forecast API is running",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/health",
+            "test": "/test", 
+            "predict": "/predict"
+        }
+    }
 
 
-@app.get("/index", response_class=FileResponse)
-async def serve_index():
-    """Serves the secondary index page."""
-    return FileResponse("index(2).html", media_type="text/html")
-
+@app.get("/index")
+async def index():
+    """Alternative index endpoint"""
+    return {
+        "status": "API is running",
+        "documentation": "Use /predict endpoint for forecasts"
+    }
 
 @app.get("/health")
 async def health_check():
