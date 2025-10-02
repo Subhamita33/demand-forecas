@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGrid | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #6c63ff;
+            --primary-dark: #4a43d6;
+            --primary-light: #8a84ff;
+            --secondary: #ff6584;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #718096;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --success: #28a745;
+            --danger: #d9534f;
+            --warning: #ffc107;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            color: #2d3748;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .login-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .login-left h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-left p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+
+        .login-features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 500px;
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-light);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .login-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            padding: 40px;
+        }
+
+        .login-form-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form-container h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .login-form-container p {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            outline: none;
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+        }
+
+        .login-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .login-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .login-divider span {
+            background: white;
+            padding: 0 15px;
+            color: var(--gray);
+        }
+
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .social-btn {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: rgba(217, 83, 79, 0.1);
+            color: var(--danger);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            color: var(--dark);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+            border-radius: 6px;
+            padding: 8px 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            margin-top: 80px;
+            padding: 20px;
+        }
+
+        /* Dashboard Container */
+        .container {
+            max-width: 1350px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            color: #fff;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        header h1 { 
+            margin: 0; 
+            font-size: 26px; 
+            font-weight: bold; 
+        }
+
+        /* File Upload Section */
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            margin: 25px 0;
+            background-color: #f9fbff;
+            transition: 0.3s ease;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .upload-area.dragover {
+            background-color: #eef6ff;
+            border-color: var(--primary-dark);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-label {
+            display: inline-block;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary);
+            padding: 12px 25px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            background-color: #fff;
+            transition: 0.3s;
+        }
+
+        .upload-label:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .file-info {
+            font-size: 14px;
+            color: #444;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .file-info span {
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        /* Project Details Section */
+        .project-details { 
+            margin-top: 30px; 
+        }
+
+        .accordion {
+            background: #f9fbff;
+            color: #333;
+            cursor: pointer;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .accordion:hover { 
+            background: #eef6ff; 
+        }
+
+        .accordion:after {
+            content: '\25BC';
+            font-size: 12px;
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion.active:after {
+            transform: rotate(180deg);
+        }
+
+        .panel {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.3s ease;
+            background: #fff;
+            border-left: 3px solid var(--primary);
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 10px;
+        }
+
+        .panel.open {
+            padding: 15px 20px;
+        }
+
+        .panel ul { 
+            list-style-type: disc; 
+            padding-left: 20px; 
+            margin: 10px 0; 
+        }
+
+        .panel li { 
+            margin-bottom: 5px; 
+        }
+
+        /* KPI/Chart/Table Styling */
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .kpi-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .kpi-card h3 { 
+            margin-top: 0; 
+            font-size: 16px; 
+            color: #666; 
+        }
+
+        .kpi-value { 
+            font-size: 32px; 
+            font-weight: bold; 
+            color: var(--primary); 
+        }
+
+        .profit .kpi-value { 
+            color: var(--success); 
+        }
+
+        .error .kpi-value { 
+            color: var(--danger); 
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9fbff;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .predicted-col { 
+            font-weight: bold; 
+            color: var(--danger); 
+        }
+
+        .table-scroll-wrapper { 
+            max-height: 300px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            margin-top: 20px;
+        }
+
+        #resultsTable { 
+            width: 100%; 
+            border-collapse: collapse; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
+        }
+
+        #resultsTable th { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+            color: white; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+        }
+
+        #resultsTable th, #resultsTable td { 
+            border: 1px solid #eee; 
+            padding: 10px 12px; 
+            text-align: left; 
+            font-size: 13px; 
+        }
+
+        button#uploadButton {
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 12px 28px; 
+            background: linear-gradient(135deg, var(--success), #20c997); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        button#uploadButton:hover { 
+            transform: translateY(-2px); 
+            background: linear-gradient(135deg, #218838, #17a589); 
+        }
+
+        button#uploadButton:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            box-shadow: none; 
+            transform: none;
+        }
+
+        #statusMessage { 
+            font-weight: 600; 
+            padding: 12px 0; 
+            min-height: 24px; 
+            color: #444; 
+        }
+
+        /* Spinner */
+        .spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn { 
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            } 
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            } 
+        }
+
+        @keyframes spin { 
+            0% { 
+                transform: rotate(0deg); 
+            } 
+            100% { 
+                transform: rotate(360deg); 
+            } 
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            
+            .login-left {
+                padding: 40px 20px;
+            }
+            
+            .login-right {
+                padding: 20px;
+            }
+            
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-area {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="login-page">
+        <div class="login-left">
+            <h1>PowerGrid AI</h1>
+            <p>AI-Powered Material Demand Forecasting for Supply Chain Optimization</p>
+            <div class="login-features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div>
+                        <h3>Smart Forecasting</h3>
+                        <p>Predict material demand using advanced machine learning algorithms</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3>Interactive Dashboards</h3>
+                        <p>Visualize demand projections with intuitive charts and reports</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h3>Secure Access</h3>
+                        <p>Enterprise-grade security for your sensitive supply chain data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="login-right">
+            <div class="login-form-container">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your PowerGrid account</p>
+                
+                <div class="error-message" id="login-error">
+                    Please fill in all required fields.
+                </div>
+                
+                <form class="login-form" id="login-form">
+                    <div class="form-group">
+                        <label for="login-name">Full Name</label>
+                        <input type="text" class="form-control" id="login-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" class="form-control" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" class="form-control" id="login-password" required>
+                    </div>
+                    <div class="login-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                    <div class="login-divider">
+                        <span>Or continue with</span>
+                    </div>
+                    <div class="social-login">
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-google"></i>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-microsoft"></i>
+                        </a>
+                    </div>
+                    <div class="signup-link">
+                        Don't have an account? <a href="#">Contact administrator</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="#" class="navbar-brand">
+                    <i class="fas fa-chart-line brand-icon"></i>
+                    PowerGrid
+                </a>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#forecasts">Forecasts</a></li>
+                    <li><a href="#reports">Reports</a></li>
+                    <li><a href="#settings">Settings</a></li>
+                </ul>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <span id="user-name">User</span>
+                    </div>
+                    <a href="#" class="logout-btn" id="logout-btn">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="container">
+                <header>
+                    <h1>⚡ PowerGrid Materials Demand Forecasting Dashboard</h1>
+                </header>
+
+                <div class="project-details">
+                    <button class="accordion">📖 Background</button>
+                    <div class="panel">
+                        <p>POWERGRID is executing a huge number of projects across India. These projects are of national importance. Delay in completion of projects must be avoided.</p>
+                    </div>
+
+                    <button class="accordion">📝 Description</button>
+                    <div class="panel">
+                        <p>The goal is to plan and predict goods and materials demand to help the business stay as profitable as possible. A forecasting solution should provide the quantity of materials to be procured on a periodic basis to avoid project time and cost overruns.</p>
+                    </div>
+
+                    <button class="accordion">🔑 Key Input Factors</button>
+                    <div class="panel">
+                        <ul>
+                            <li>Budget</li>
+                            <li>Upcoming project locations</li>
+                            <li>Tower types and sub-station types</li>
+                            <li>Geographic locations</li>
+                            <li>Taxes</li>
+                        </ul>
+                    </div>
+
+                    <button class="accordion">🎯 Expected Solution</button>
+                    <div class="panel">
+                        <p>The solution should provide accurate demand forecasting for various materials to minimize costs, avoid shortages or overstocking, and improve overall supply chain efficiency.</p>
+                    </div>
+                </div>
+
+                <p>Upload a CSV file containing project-month data to generate accurate material demand forecasts for procurement planning.</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <label for="csvFile" class="upload-label">📤 Choose File</label>
+                    <input type="file" id="csvFile" accept=".csv">
+                    <div class="file-info" id="fileInfo">No file selected</div>
+                    <button onclick="uploadFile()" id="uploadButton">Get Forecasts</button>
+                    <div class="spinner" id="spinner"></div>
+                </div>
+
+                <div id="statusMessage">Status: Ready to upload file.</div>
+
+                <div class="kpi-cards">
+                    <div class="kpi-card">
+                        <h3>Total Forecasted Demand</h3>
+                        <div class="kpi-value" id="kpi-demand">0</div>
+                        <small>Total Units (All Materials)</small>
+                    </div>
+                    <div class="kpi-card profit">
+                        <h3>Inventory Optimization Ratio</h3>
+                        <div class="kpi-value" id="kpi-profit">N/A</div>
+                        <small>Efficiency vs. Max Demand</small>
+                    </div>
+                    <div class="kpi-card error">
+                        <h3>Average Demand Error (MAE)</h3>
+                        <div class="kpi-value" id="kpi-error">0</div>
+                        <small>Mean Absolute Error (Units)</small>
+                    </div>
+                </div>
+                
+                <h2>📈 Visual Analysis</h2>
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h3>Predicted Demand (Time Series)</h3>
+                        <canvas id="timeSeriesChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Error Distribution by Material (Target)</h3>
+                        <canvas id="materialErrorChart"></canvas>
+                    </div>
+                </div>
+
+                <h2>📊 Forecast Details</h2>
+                <div class="table-scroll-wrapper">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr><td colspan="100%" style="text-align: center; color: #666;">Upload a file to see results...</td></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script>
+        // API Configuration - Using mock data instead
+        const API_URL = "/predict"; // This will be mocked
+        
+        // Hardcoded metrics for showcase
+        const TARGET_MAE = 8.5; 
+        const TARGET_OPT_RATIO = 0.855; 
+        const MOCK_MATERIAL_ERRORS = {
+            'Steel_Tons': 9.2,
+            'Cable_Meters': 7.5,
+            'Insulator_Units': 8.8,
+        };
+
+        // User credentials (accept any login)
+        const VALID_USERS = [
+            { email: "admin@powergrid.com", password: "admin123", name: "Admin User" },
+            { email: "user@powergrid.com", password: "user123", name: "Demo User" },
+            { email: "test@powergrid.com", password: "test123", name: "Test User" }
+        ];
+
+        // Chart instances
+        let timeSeriesChartInstance = null;
+        let materialErrorChartInstance = null;
+
+        // UI Element References
+        const loginPage = document.getElementById('login-page');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const userAvatar = document.getElementById('user-avatar');
+        const userName = document.getElementById('user-name');
+        const logoutBtn = document.getElementById('logout-btn');
+        const button = document.getElementById('uploadButton');
+        const spinner = document.getElementById('spinner');
+        const fileInput = document.getElementById('csvFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const statusMsg = document.getElementById('statusMessage');
+        const uploadArea = document.getElementById('uploadArea');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUser = localStorage.getItem('powergrid_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                showDashboard(user);
+            }
+        });
+
+        // Login form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('login-name').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Validate all fields are filled
+            if (!name || !email || !password) {
+                loginError.textContent = "Please fill in all required fields.";
+                loginError.style.display = 'block';
+                return;
+            }
+            
+            // Accept any email and password combination
+            const user = { name: name, email: email };
+            
+            // Save user session
+            localStorage.setItem('powergrid_user', JSON.stringify(user));
+            showDashboard(user);
+            loginError.style.display = 'none';
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('powergrid_user');
+            showLogin();
+        });
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+
+        // Show dashboard after login
+        function showDashboard(user) {
+            loginPage.style.display = 'none';
+            dashboard.style.display = 'block';
+            userAvatar.textContent = user.name.charAt(0);
+            userName.textContent = user.name;
+        }
+
+        // Show login page
+        function showLogin() {
+            dashboard.style.display = 'none';
+            loginPage.style.display = 'flex';
+            loginForm.reset();
+        }
+
+        // --- ACCORDION INTERACTIVITY ---
+        document.querySelectorAll('.accordion').forEach(btn => {
+          btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            const panel = btn.nextElementSibling;
+            if (panel.style.maxHeight) {
+              panel.style.maxHeight = null;
+              panel.classList.remove("open");
+            } else {
+              panel.style.maxHeight = panel.scrollHeight + "px";
+              panel.classList.add("open");
+            }
+          });
+        });
+
+        // --- UPLOAD INTERACTIVITY (Drag & Drop, File Info) ---
+        uploadArea.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+          uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove('dragover');
+          if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            updateFileInfo(fileInput.files[0]);
+          }
+        });
+        
+        fileInput.addEventListener('change', () => {
+          if (fileInput.files.length) updateFileInfo(fileInput.files[0]);
+          else fileInfo.innerHTML = `No file selected`;
+        });
+
+        function updateFileInfo(file) {
+          fileInfo.innerHTML = `Selected File: <span>${file.name}</span> (${(file.size/1024).toFixed(1)} KB)`;
+        }
+
+        // --- MOCK DATA GENERATOR ---
+        function generateMockForecasts() {
+            const mockData = [];
+            const materials = ['Steel_Tons', 'Cable_Meters', 'Insulator_Units', 'Conductor_KMs'];
+            const projects = ['PROJ-001', 'PROJ-002', 'PROJ-003'];
+            const regions = ['North', 'South', 'East', 'West'];
+            const budgetSegments = ['Low', 'Medium', 'High'];
+            const projectTypes = ['Line', 'Substation'];
+            const towerTypes = ['A-Type', 'B-Type', 'D-Type'];
+            const substationTypes = ['400kV', '220kV', '132kV'];
+            
+            for (let i = 0; i < 50; i++) {
+                const projectType = projectTypes[Math.floor(Math.random() * projectTypes.length)];
+                
+                mockData.push({
+                    ProjectID: projects[Math.floor(Math.random() * projects.length)],
+                    MaterialType: materials[Math.floor(Math.random() * materials.length)],
+                    MonthIndex: Math.floor(Math.random() * 24) + 1,
+                    ProjectType: projectType,
+                    Region: regions[Math.floor(Math.random() * regions.length)],
+                    BudgetSegment: budgetSegments[Math.floor(Math.random() * budgetSegments.length)],
+                    TowerType: projectType === 'Line' ? towerTypes[Math.floor(Math.random() * towerTypes.length)] : 'N/A',
+                    SubstationType: projectType === 'Substation' ? substationTypes[Math.floor(Math.random() * substationTypes.length)] : 'N/A',
+                    Predicted_DemandQuantity: Math.floor(Math.random() * 1000) + 100
+                });
+            }
+            
+            return mockData;
+        }
+
+        // --- ANALYSIS FUNCTIONS ---
+        function calculateMetrics(forecasts) {
+            let totalPredicted = 0;
+            forecasts.forEach(item => {
+                totalPredicted += item.Predicted_DemandQuantity || 0;
+            });
+            
+            return { 
+                totalPredicted, 
+                MAE: TARGET_MAE, 
+                optimizationRatio: TARGET_OPT_RATIO,
+                materialErrorData: {
+                    labels: Object.keys(MOCK_MATERIAL_ERRORS),
+                    data: Object.values(MOCK_MATERIAL_ERRORS),
+                }
+            };
+        }
+
+        function updateKPIs(metrics) {
+            document.getElementById('kpi-demand').textContent = metrics.totalPredicted.toLocaleString();
+            document.getElementById('kpi-error').textContent = metrics.MAE.toFixed(1);
+            document.getElementById('kpi-profit').textContent = (metrics.optimizationRatio * 100).toFixed(1) + '%';
+        }
+
+        // --- CHART FUNCTIONS ---
+        function renderTimeSeries(forecasts) {
+            const grouped = forecasts.reduce((acc, item) => {
+                const month = item.MonthIndex;
+                if (!acc[month]) acc[month] = { predicted: 0 };
+                acc[month].predicted += item.Predicted_DemandQuantity || 0;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(grouped).sort((a, b) => a - b);
+            const predictedData = labels.map(l => grouped[l].predicted);
+
+            if (timeSeriesChartInstance) timeSeriesChartInstance.destroy();
+
+            timeSeriesChartInstance = new Chart(document.getElementById('timeSeriesChart'), {
+                type: 'line',
+                data: {
+                    labels: labels.map(l => `Month ${l}`),
+                    datasets: [
+                        {
+                            label: 'Predicted Demand',
+                            data: predictedData,
+                            borderColor: 'rgba(217, 83, 79, 1)',
+                            backgroundColor: 'rgba(217, 83, 79, 0.2)',
+                            fill: true,
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Total Units' } } }
+                }
+            });
+        }
+
+        function renderMaterialError(materialErrorData) {
+            if (materialErrorChartInstance) materialErrorChartInstance.destroy();
+
+            materialErrorChartInstance = new Chart(document.getElementById('materialErrorChart'), {
+                type: 'bar',
+                data: {
+                    labels: materialErrorData.labels,
+                    datasets: [{
+                        label: 'Target Avg Error (MAE) per Material',
+                        data: materialErrorData.data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)'
+                        ],
+                        borderColor: 'rgba(50, 50, 50, 0.3)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Mean Absolute Error (Units)' } } }
+                }
+            });
+        }
+
+        // --- TABLE FUNCTION ---
+        function buildTable(forecasts) {
+            const table = document.getElementById('resultsTable');
+            table.innerHTML = ''; 
+            
+            if (forecasts.length === 0) { 
+                table.innerHTML = '<thead><tr><th>No forecasts generated.</th></tr></thead><tbody></tbody>'; 
+                return; 
+            }
+
+            const headers = Object.keys(forecasts[0]);
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+            
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                if (headerText === 'Predicted_DemandQuantity') { 
+                    th.style.backgroundColor = '#d9534f'; 
+                }
+                headerRow.appendChild(th);
+            });
+
+            const tbody = table.createTBody();
+            forecasts.forEach(item => {
+                const row = tbody.insertRow();
+                headers.forEach(header => {
+                    const cell = row.insertCell();
+                    cell.textContent = item[header];
+                    if (header === 'Predicted_DemandQuantity') { 
+                        cell.classList.add('predicted-col'); 
+                    }
+                });
+            });
+        }
+
+        // --- UPLOAD FILE FUNCTION (MOCK VERSION) ---
+        async function uploadFile() {
+            if (fileInput.files.length === 0) { 
+                statusMsg.textContent = "Status: ❌ Please select a file or drag and drop a CSV."; 
+                return; 
+            }
+            
+            const file = fileInput.files[0];
+            
+            // Disable button, show spinner, update status
+            button.disabled = true;
+            spinner.style.display = "inline-block";
+            statusMsg.textContent = `Status: ⏳ Processing '${file.name}'...`;
+
+            // Simulate API delay (2 seconds)
+            setTimeout(() => {
+                try {
+                    // Mock success response
+                    statusMsg.textContent = `Status: ✅ Success! Generated 50 forecast records. (Demo Mode)`;
+                    
+                    // Generate mock forecast data
+                    const mockForecasts = generateMockForecasts();
+                    const metrics = calculateMetrics(mockForecasts);
+                    
+                    // Update all visual components
+                    updateKPIs(metrics);
+                    renderTimeSeries(mockForecasts);
+                    renderMaterialError(metrics.materialErrorData);
+                    buildTable(mockForecasts);
+                    
+                } catch (error) {
+                    // Error handling
+                    statusMsg.textContent = `Status: ❌ Error processing file: ${error.message}`;
+                } finally {
+                    // Reset UI State
+                    button.disabled = false;
+                    spinner.style.display = "none";
+                }
+            }, 2000);
+        }
+
+        // Initialize charts with empty data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize empty charts
+            renderTimeSeries([]);
+            renderMaterialError({labels: [], data: []});
+        });
+    </script>
+</body>
+</html>
