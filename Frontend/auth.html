@@ -946,9 +946,9 @@
         </div>
     </div>
 
-        <script>
-        // API Configuration - Using mock data instead
-        const API_URL = "/predict"; // This will be mocked
+    <script>
+        // API Configuration - Updated to use your Render backend
+        const API_URL = "https://demand-forecast-8ng2.onrender.com/predict";
         
         // Hardcoded metrics for showcase
         const TARGET_MAE = 8.5; 
@@ -1090,7 +1090,76 @@
           fileInfo.innerHTML = `Selected File: <span>${file.name}</span> (${(file.size/1024).toFixed(1)} KB)`;
         }
 
-        // --- MOCK DATA GENERATOR ---
+        // --- REAL API CALL FUNCTION ---
+        async function uploadFile() {
+            if (fileInput.files.length === 0) { 
+                statusMsg.textContent = "Status: ❌ Please select a file or drag and drop a CSV."; 
+                return; 
+            }
+            
+            const file = fileInput.files[0];
+            
+            // Disable button, show spinner, update status
+            button.disabled = true;
+            spinner.style.display = "inline-block";
+            statusMsg.textContent = `Status: ⏳ Processing '${file.name}'...`;
+
+            try {
+                // Create FormData for file upload
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Make API call to your Render backend
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    statusMsg.textContent = `Status: ✅ Success! Generated ${result.count} forecast records.`;
+                    
+                    // Process the real forecast data from API
+                    const forecasts = result.forecasts;
+                    const metrics = calculateMetrics(forecasts);
+                    
+                    // Update all visual components with real data
+                    updateKPIs(metrics);
+                    renderTimeSeries(forecasts);
+                    renderMaterialError(metrics.materialErrorData);
+                    buildTable(forecasts);
+                    
+                } else {
+                    throw new Error(result.detail || 'Unknown error from server');
+                }
+                
+            } catch (error) {
+                // Error handling - fallback to mock data if API fails
+                console.error('API Error:', error);
+                statusMsg.textContent = `Status: ⚠️ Using demo data (API: ${error.message})`;
+                
+                // Fallback to mock data
+                const mockForecasts = generateMockForecasts();
+                const metrics = calculateMetrics(mockForecasts);
+                
+                updateKPIs(metrics);
+                renderTimeSeries(mockForecasts);
+                renderMaterialError(metrics.materialErrorData);
+                buildTable(mockForecasts);
+                
+            } finally {
+                // Reset UI State
+                button.disabled = false;
+                spinner.style.display = "none";
+            }
+        }
+
+        // --- MOCK DATA GENERATOR (Fallback) ---
         function generateMockForecasts() {
             const mockData = [];
             const materials = ['Steel_Tons', 'Cable_Meters', 'Insulator_Units', 'Conductor_KMs'];
@@ -1241,47 +1310,6 @@
                     }
                 });
             });
-        }
-
-        // --- UPLOAD FILE FUNCTION (MOCK VERSION) ---
-        async function uploadFile() {
-            if (fileInput.files.length === 0) { 
-                statusMsg.textContent = "Status: ❌ Please select a file or drag and drop a CSV."; 
-                return; 
-            }
-            
-            const file = fileInput.files[0];
-            
-            // Disable button, show spinner, update status
-            button.disabled = true;
-            spinner.style.display = "inline-block";
-            statusMsg.textContent = `Status: ⏳ Processing '${file.name}'...`;
-
-            // Simulate API delay (2 seconds)
-            setTimeout(() => {
-                try {
-                    // Mock success response
-                    statusMsg.textContent = `Status: ✅ Success! Generated 50 forecast records. (Demo Mode)`;
-                    
-                    // Generate mock forecast data
-                    const mockForecasts = generateMockForecasts();
-                    const metrics = calculateMetrics(mockForecasts);
-                    
-                    // Update all visual components
-                    updateKPIs(metrics);
-                    renderTimeSeries(mockForecasts);
-                    renderMaterialError(metrics.materialErrorData);
-                    buildTable(mockForecasts);
-                    
-                } catch (error) {
-                    // Error handling
-                    statusMsg.textContent = `Status: ❌ Error processing file: ${error.message}`;
-                } finally {
-                    // Reset UI State
-                    button.disabled = false;
-                    spinner.style.display = "none";
-                }
-            }, 2000);
         }
 
         // Initialize charts with empty data on page load
